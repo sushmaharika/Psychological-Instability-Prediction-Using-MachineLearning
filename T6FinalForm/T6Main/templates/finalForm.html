@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychological Instability prediction</title>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="continuosForm.css"> -->
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      background-image: url("https://img.freepik.com/free-photo/gradient-bokeh-digital-business-wallpaper_53876-110796.jpg?t=st=1713249919~exp=1713253519~hmac=1d760323bfef4181d100bd7421f1b590e4ef4d9c15a378067763334efee4a24e&w=1060");
+      background-image:  url_for('static',filename = 'images/gradient-bokeh-digital-business-wallpaper.jpg.') ;
+      background-size:cover;
+    background-position: center;
+    }
+    #ageQuestion {
+  text-align: center;
+}
+#ageQuestion input[type="number"] {
+  position: static;
+}
+    .container {
+      margin: 10px;
+      background-color: white;
+      padding: 20px;
+      border: 2px solid blanchedalmond;
+      width: 80%; /* Responsive width */
+      max-width: 600px; /* Max width */
+      box-sizing: border-box; /* Includes padding in width calculation */
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .nextButton, .backButton {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: absolute;
+    }
+    .nextButton {
+      right: 20px;
+      bottom: 20px;
+    }
+    .backButton {
+      left: 20px;
+      bottom: 20px;
+    }
+    .nextButton:hover, .backButton:hover {
+      background-color: #45a049;
+    }
+    .radio-image {
+      width: 100%; /* Responsive image width */
+      height: auto; /* Maintain aspect ratio */
+      max-width: 150px; /* Maximum image width */
+      max-height: 150px; /* Maximum image height */
+     
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 95%; /* More width on smaller screens */
+        padding: 10px;
+      }
+      .nextButton, .backButton {
+        padding: 5px 10px; /* Smaller padding on smaller screens */
+        font-size: 14px; /* Smaller font size on smaller screens */
+      }
+      .radio-image {
+        max-width: 100px; /* Smaller image size on smaller screens */
+        max-height: 100px;
+      }
+    }
+  </style> 
+
+</head>
+<body>
+
+
+<form action="{{ url_for('predict')}}" method="POST" id="Questions" class="container" >
+
+
+  <div id="ageQuestion">
+    <label><h1>Age</h1></label><br>  
+    <label for="age">
+    <input type="number" id="age" min="15" value="15" name="age">
+    <!-- <img src="/pictures/yes.jpg" alt="Male" class="radio-icon"> -->
+    
+    </label> <br>
+ 
+    <button type="button" class="nextButton" onclick="GenderQuestionNext('age')">Next</button>
+  </div>
+
+  <div id="genderQuestion" style="display: none;">
+    <label><h1>Gender</h1></label><br>
+    <div style="display: flex; justify-content: space-around;">
+        <label for="maleGender">
+            <image class="radio-image" id="maleGenderImage" onclick="selectGender('maleGender')" src="{{ url_for('static',filename = 'images/sundarpichai.png') }}">
+            <input type="radio" id="maleGender" name="gender" value="Male" required style="display: none;">
+        </label>
+
+        <label for="femaleGender">
+            <image class="radio-image" id="femaleGenderImage" onclick="selectGender('femaleGender')" src="{{ url_for('static',filename = 'images/sudhamurty.jpg') }}">
+            <input type="radio" id="femaleGender" name="gender" value="Female" required style="display: none;">
+        </label>
+
+        <label for="otherGender">
+            <image class="radio-image" id="otherGenderImage" onclick="selectGender('otherGender')" src="{{ url_for('static',filename = 'images/Other.png') }}">
+            <input type="radio" id="otherGender" name="gender" value="Other" required style="display: none;">
+        </label>
+    </div><br>
+
+    <button type="button" class="backButton" onclick="AgeQuestion()">Back</button>
+    <button type="button" class="nextButton" onclick="SelfEmployedNext('gender')">Next</button>
+</div>
+
+<script>
+    function selectGender(genderId) {
+        let genderImage = document.getElementById(genderId + "Image");
+        let radioButton = document.getElementById(genderId);
+
+        // Remove the "selected" class from all images
+        let images = document.getElementsByClassName("radio-image");
+        for (let i = 0; i < images.length; i++) {
+            images[i].classList.remove("selected");
+        }
+
+        // Add the "selected" class to the selected image
+        genderImage.classList.add("selected");
+
+        // Check the corresponding radio button
+        radioButton.checked = true;
+    }
+</script>
+
+<style>
+    .selected {
+        border: 2px solid blue;
+    }
+</style>
+
+
+
+<div id="selfEmpQuestion" style="display: none;">
+  <label><h1>Are you self employed</h1></label><br>
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesEmployed">
+      <image class="radio-image" id="yesEmployedImage" onclick="selectSelfEmployed('yesEmployed')" src="{{ url_for('static',filename = 'images/yes.jpg') }}">
+      <input type="radio" id="yesEmployed" name="self_employed" value="Yes" required style="display: none;">
+    </label>
+    <label for="noEmployed">
+      <image class="radio-image" id="noEmployedImage" onclick="selectSelfEmployed('noEmployed')" src="{{ url_for('static',filename = 'images/no.jpg') }}">
+      <input type="radio" id="noEmployed" name="self_employed" value="No" required style="display: none;">
+    </label>
+  </div><br>
+  <button type="button" class="backButton" onclick="GenderQuestion()">Back</button>
+  <button type="button" class="nextButton" onclick="FamilyIllnessNext('self_employed')">Next</button>
+</div>
+
+<script>
+  function selectSelfEmployed(optionId) {
+    let image = document.getElementById(optionId + "Image");
+    let radioButton = document.getElementById(optionId);
+
+    // Remove the "selected" class from the previous image
+    if (document.getElementById("yesEmployedImage").classList.contains("selected")) {
+      document.getElementById("yesEmployedImage").classList.remove("selected");
+    }
+    if (document.getElementById("noEmployedImage").classList.contains("selected")) {
+      document.getElementById("noEmployedImage").classList.remove("selected");
+    }
+
+    // Add the "selected" class to the selected image
+    image.classList.add("selected");
+
+    // Check the corresponding radio button
+    radioButton.checked = true;
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+<div id="FamilyIllness" style="display: none;">
+  <label><h1>Do you have a family history of mental illness?</h1></label><br>
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesIll">
+      <image class="radio-image" id="yesIllImage" onclick="selectFamilyIllness('yesIll')" src="{{ url_for('static',filename = 'images/yes.jpg') }}">
+      <input type="radio" id="yesIll" name="family_history" value="Yes" required style="display: none;">
+    </label>
+    <label for="noIll">
+      <image class="radio-image" id="noIllImage" onclick="selectFamilyIllness('noIll')" src="{{ url_for('static',filename = 'images/no.jpg') }}">
+      <input type="radio" id="noIll" name="family_history" value="No" required style="display: none;">
+    </label>
+  </div><br>
+  <button type="button" class="backButton" onclick="SelfEmployedBack()">Back</button>
+  <button type="button" class="nextButton" onclick="HealthConditionNext('family_history')">Next</button>
+</div>
+
+<script>
+  function selectFamilyIllness(optionId) {
+    let image = document.getElementById(optionId + "Image");
+    let radioButton = document.getElementById(optionId);
+
+    // Remove the "selected" class from the previous image
+    if (document.getElementById("yesIllImage").classList.contains("selected")) {
+      document.getElementById("yesIllImage").classList.remove("selected");
+    }
+    if (document.getElementById("noIllImage").classList.contains("selected")) {
+      document.getElementById("noIllImage").classList.remove("selected");
+    }
+
+    // Add the "selected" class to the selected image
+    image.classList.add("selected");
+
+    // Check the corresponding radio button
+    radioButton.checked = true;
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+
+<div id="HealthQuestion" style="display: none;">
+  <label><h1>If you have a mental health condition, do you feel that it interferes with your work?</h1></label><br>
+  <div style="display: flex; justify-content: space-around;">
+    <label for="neverFeel">
+      <image class="radio-image" id="neverFeelImage" onclick="selectHealthQuestion('neverFeel')" src="{{ url_for('static',filename = 'images/never.jpg') }}">
+      <input type="radio" id="neverFeel" name="work_interfere" value="Never" required style="display: none;">
+    </label>
+    <label for="rareFeel">
+      <image class="radio-image" id="rareFeelImage" onclick="selectHealthQuestion('rareFeel')" src="{{ url_for('static',filename = 'images/rarely.jpg') }}">
+      <input type="radio" id="rareFeel" name="work_interfere" value="Rarely" required style="display: none;">
+    </label>
+    <label for="someFeel">
+      <image class="radio-image" id="someFeelImage" onclick="selectHealthQuestion('someFeel')" src="{{ url_for('static',filename = 'images/Sometimes.png') }}">
+      <input type="radio" id="someFeel" name="work_interfere" value="Sometimes" required style="display: none;">
+    </label>
+    <label for="oftenFeel">
+      <image class="radio-image" id="oftenFeelImage" onclick="selectHealthQuestion('oftenFeel')" src="{{ url_for('static',filename = 'images/often.jpg') }}">
+      <input type="radio" id="oftenFeel" name="work_interfere" value="Often" required style="display: none;">
+    </label>
+  </div><br>
+  <button type="button" class="backButton" onclick="FamilyIllnessBack()">Back</button>
+  <button type="button" class="nextButton" onclick="EmployesNext('work_interfere')">Next</button>
+</div>
+
+<script>
+  function selectHealthQuestion(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("work_interfere");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+<div id="EmployeQuestion" style="display: none;">
+
+  <label><h1>How many employees does your company have?</h1></label><br>
+  
+    <label for="noEmployee">
+      <image class="radio-image" id="noEmployeeImage" onclick="setEmployee('noEmployee')" src="{{ url_for('static',filename = 'images/1-25.jpg') }}">
+      <input type="radio" id="noEmployee" name="no_employees" value="1-5" style="display: none;">
+    </label>
+
+    <label for="fewEmployee">
+      <image class="radio-image" id="fewEmployeeImage" onclick="setEmployee('fewEmployee')" src="{{ url_for('static',filename = 'images/26-50.jpg') }}">
+      <input type="radio" id="fewEmployee" name="no_employees" value="6-25" style="display: none;">
+    </label>
+
+    <label for="someEmployee">
+      <image class="radio-image" id="someEmployeeImage" onclick="setEmployee('someEmployee')" src="{{ url_for('static',filename = 'images/51-100.jpg') }}">
+      <input type="radio" id="someEmployee" name="no_employees" value="26-100" style="display: none;">
+    </label>
+
+    <label for="moreEmployee">
+      <image class="radio-image" id="moreEmployeeImage" onclick="setEmployee('moreEmployee')" src="{{ url_for('static',filename = 'images/100-500.jpg') }}">
+      <input type="radio" id="moreEmployee" name="no_employees" value="100-500" style="display: none;">
+    </label>
+
+    <label for="veryMore">
+      <image class="radio-image" id="veryMoreImage" onclick="setEmployee('veryMore')" src="{{ url_for('static',filename = 'images/500-1000.jpg') }}">
+      <input type="radio" id="veryMore" name="no_employees" value="500-1000" style="display: none;">
+    </label>
+
+    <label for="oftenRadio">
+      <image class="radio-image" id="oftenRadioImage" onclick="setEmployee('oftenRadio')" src="{{ url_for('static',filename = 'images/morethan1000.jpg') }}">
+      <input type="radio" id="oftenRadio" name="no_employees" value="More than 1000" style="display: none;">
+    </label>
+  
+  <br>
+
+  <button type="button" class="backButton" onclick="HealthConditionBack()">Back</button>
+  <button type="button" class="nextButton" onclick="WorkmodeNext('no_employees')">Next</button> 
+</div>
+
+<script>
+  function setEmployee(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("no_employees");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+<div id="Workmode" style="display: none;">
+
+  <label><h1>Do you work remotely (outside of an office) at least 50% of the time?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesRadio">
+      <image class="radio-image" id="yesRadioImage" onclick="selectRemoteWork('yesRadio')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesRadio" name="remote_work" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noRadio">
+      <image class="radio-image" id="noRadioImage" onclick="selectRemoteWork('noRadio')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noRadio" name="remote_work" value="No" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="EmployesBack()">Back</button>
+  <button type="button" class="nextButton" onclick="HealthBenifitsNext('remote_work')">Next</button>
+
+</div>
+
+<script>
+  function selectRemoteWork(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("remote_work");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+<div id="HealthBenifits" style="display: none;">
+
+  <label><h1>Is your employer primarily a tech company organization?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesTech">
+      <image class="radio-image" id="yesTechImage" onclick="selectTechCompany('yesTech')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesTech" name="tech_company" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noTech">
+      <image class="radio-image" id="noTechImage" onclick="selectTechCompany('noTech')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noTech" name="tech_company" value="No" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="WorkmodeBack()">Back</button>
+  <button type="button" class="nextButton" onclick="MentalHealthNext('tech_company')">Next</button>
+
+</div>
+
+<script>
+  function selectTechCompany(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("tech_company");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+<div id="MentalHealth" style="display: none;">
+
+  <label><h1>Does your company provide mental health benefits?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesProvide">
+      <image class="radio-image" id="yesProvideImage" onclick="selectMentalHealthBenefits('yesProvide')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesProvide" name="benefits" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noProvide">
+      <image class="radio-image" id="noProvideImage" onclick="selectMentalHealthBenefits('noProvide')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noProvide" name="benefits" value="No" style="display: none;">
+    </label>
+    
+    <label for="otherProvide">
+      <image class="radio-image" id="otherProvideImage" onclick="selectMentalHealthBenefits('otherProvide')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="otherProvide" name="benefits" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="HealthBenifitsBack()">Back</button>
+  <button type="button" class="nextButton" onclick="HealthOptinsNext('benefits')">Next</button>
+
+</div>
+
+<script>
+  function selectMentalHealthBenefits(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("benefits");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+
+<div id="HeathOption" style="display: none;">
+
+  <label><h1>Do you know the options for mental health care your employer provides?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesIdea">
+      <image class="radio-image" id="yesIdeaImage" onclick="selectMentalHealthOption('yesIdea')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesIdea" name="option" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noIdea">
+      <image class="radio-image" id="noIdeaImage" onclick="selectMentalHealthOption('noIdea')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noIdea" name="option" value="No" style="display: none;">
+    </label>
+  
+    <label for="otherIdea">
+      <image class="radio-image" id="otherIdeaImage" onclick="selectMentalHealthOption('otherIdea')" src="{{ url_for('static',filename = 'images/notsure.jpg') }}"></image>
+      <input type="radio" id="otherIdea" name="option" value="Not sure" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="MentalHealthBack()">Back</button>
+  <button type="button" class="nextButton" onclick="WellnessNext('option')">Next</button>
+
+</div>
+
+<script>
+  function selectMentalHealthOption(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("option");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+<div id="Wellness" style="display: none;">
+
+  <label><h1>Has your employer ever discussed mental health as a part of an employee wellness program?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesDiscussed">
+      <image class="radio-image" id="yesDiscussedImage" onclick="selectWellnessDiscussion('yesDiscussed')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesDiscussed" name="wellness_program" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noDiscussed">
+      <image class="radio-image" id="noDiscussedImage" onclick="selectWellnessDiscussion('noDiscussed')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noDiscussed" name="wellness_program" value="No" style="display: none;">
+    </label>
+    
+    <label for="othersDiscussed">
+      <image class="radio-image" id="othersDiscussedImage" onclick="selectWellnessDiscussion('othersDiscussed')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="othersDiscussed" name="wellness_program" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="HealthOptinsBack()">Back</button>
+  <button type="button" class="nextButton" onclick="SeekhelpNext('wellness_program')">Next</button>
+
+</div>
+
+<script>
+  function selectWellnessDiscussion(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("wellness_program");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+<div id="Seekhelp" style="display: none;">
+
+  <label><h1>Does your company provide resources to learn more about mental health issues and how to seek help?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesResources">
+      <image class="radio-image" id="yesResourcesImage" onclick="selectSeekHelp('yesResources')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesResources" name="seek_help" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noResources">
+      <image class="radio-image" id="noResourcesImage" onclick="selectSeekHelp('noResources')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noResources" name="seek_help" value="No" style="display: none;">
+    </label>
+    
+    <label for="othersResources">
+      <image class="radio-image" id="othersResourcesImage" onclick="selectSeekHelp('othersResources')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="othersResources" name="seek_help" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="WellnessBack()">Back</button>
+  <button type="button" class="nextButton" onclick="treatmentNext('seek_help')">Next</button>
+
+</div>
+
+<script>
+  function selectSeekHelp(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("seek_help");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+<div id="TreatmentResource" style="display: none;">
+
+  <label><h1>Is your anonymity protected if you choose to take advantage of mental health abuse treatment resources?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesProtected">
+      <image class="radio-image" id="yesProtectedImage" onclick="selectAnonymity('yesProtected')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesProtected" name="anonymity" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noProtected">
+      <image class="radio-image" id="noProtectedImage" onclick="selectAnonymity('noProtected')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noProtected" name="anonymity" value="No" style="display: none;">
+    </label>
+    
+    <label for="othersProtected">
+      <image class="radio-image" id="othersProtectedImage" onclick="selectAnonymity('othersProtected')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="othersProtected" name="anonymity" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="SeekhelpBack()">Back</button>
+  <button type="button" class="nextButton" onclick="MedicalLeaveNext('anonymity')">Next</button>
+
+</div>
+
+<script>
+  function selectAnonymity(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("anonymity");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+<div id="MedicalLeave" style="display: none;">
+
+  <label><h1>How easy is it for you to take medical leave for a mental health condition?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesSomewhat">
+      <image class="radio-image" id="yesSomewhatImage" onclick="selectMedicalLeave('yesSomewhat')" src="{{ url_for('static',filename = 'images/somewhateasy.png') }}"></image>
+      <input type="radio" id="yesSomewhat" name="leave" value="Somewhat easy" style="display: none;">
+    </label>
+
+    <label for="yesVery">
+      <image class="radio-image" id="yesVeryImage" onclick="selectMedicalLeave('yesVery')" src="{{ url_for('static',filename = 'images/veryeasy.png') }}"></image>
+      <input type="radio" id="yesVery" name="leave" value="Very easy" style="display: none;">
+    </label>
+    
+    <label for="yesDifficult">
+      <image class="radio-image" id="yesDifficultImage" onclick="selectMedicalLeave('yesDifficult')" src="{{ url_for('static',filename = 'images/Sometimes.png') }}"></image>
+      <input type="radio" id="yesDifficult" name="leave" value="Somewhat difficult" style="display: none;">
+    </label>
+    
+    <label for="yesVeryDifficult">
+      <image class="radio-image" id="yesVeryDifficultImage" onclick="selectMedicalLeave('yesVeryDifficult')" src="{{ url_for('static',filename = 'images/verydifficult.jpeg') }}"></image>
+      <input type="radio" id="yesVeryDifficult" name="leave" value="Very difficult" style="display: none;">
+    </label>
+    
+    <label for="yesDontKnow">
+      <image class="radio-image" id="yesDontKnowImage" onclick="selectMedicalLeave('yesDontKnow')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="yesDontKnow" name="leave" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="treatmentBack()">Back</button>
+  <button type="button" class="nextButton" onclick="MenatlConsequencesNext('leave')">Next</button>
+
+</div>
+
+<script>
+  function selectMedicalLeave(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("leave");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+<div id="Consequences" style="display: none;">
+
+  <label><h1>Do you think that discussing a mental health issue with your employer would have negative consequences?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesIthink">
+      <image class="radio-image" id="yesIthinkImage" onclick="selectConsequences('yesIthink')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesIthink" name="mental_health_consequence" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noIthink">
+      <image class="radio-image" id="noIthinkImage" onclick="selectConsequences('noIthink')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noIthink" name="mental_health_consequence" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontIthink">
+      <image class="radio-image" id="dontIthinkImage" onclick="selectConsequences('dontIthink')" src="{{ url_for('static',filename = 'images/maybe.png') }}"></image>
+      <input type="radio" id="dontIthink" name="mental_health_consequence" value="Maybe" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="MedicalLeaveBack()">Back</button>
+  <button type="button" class="nextButton" onclick="PhysicalConsequencesNext('mental_health_consequence')">Next</button>
+
+</div>
+
+<script>
+  function selectConsequences(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("mental_health_consequence");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+<div id="PhysicalConsequences" style="display: none;">
+
+  <label><h1>Do you think that discussing a physical health issue with your employer would have negative consequences?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesI">
+      <image class="radio-image" id="yesIImage" onclick="selectPhysicalConsequences('yesI')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesI" name="phys_health_consequence" value="Yes" style="display: none;">
+    </label>
+    
+    <label for="noI">
+      <image class="radio-image" id="noIImage" onclick="selectPhysicalConsequences('noI')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noI" name="phys_health_consequence" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontI">
+      <image class="radio-image" id="dontIImage" onclick="selectPhysicalConsequences('dontI')" src="{{ url_for('static',filename = 'images/maybe.png') }}"></image>
+      <input type="radio" id="dontI" name="phys_health_consequence" value="Maybe" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="MenatlConsequencesBack()">Back</button>
+  <button type="button" class="nextButton" onclick="CoworkersNext('phys_health_consequence')">Next</button>
+  
+</div>
+
+<script>
+  function selectPhysicalConsequences(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("phys_health_consequence");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+<div id="CoWorkers" style="display: none;">
+
+  <label><h1>Would you be willing to discuss a mental health issue with your coworkers?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesCowork">
+      <image class="radio-image" id="yesCoworkImage" onclick="selectCoWorkers('yesCowork')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesCowork" name="coworkers" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noCowork">
+      <image class="radio-image" id="noCoworkImage" onclick="selectCoWorkers('noCowork')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noCowork" name="coworkers" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontCowork">
+      <image class="radio-image" id="dontCoworkImage" onclick="selectCoWorkers('dontCowork')" src="{{ url_for('static',filename = 'images/someofthem.jpg') }}"></image>
+      <input type="radio" id="dontCowork" name="coworkers" value="Some of them" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="PhysicalConsequencesBack()">Back</button>
+  <button type="button" class="nextButton" onclick="supervisorNext('coworkers')">Next</button>
+
+</div>
+
+<script>
+  function selectCoWorkers(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("coworkers");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+<div id="DirectSupervisor" style="display: none;">
+
+  <label><h1>Would you be willing to discuss a mental health issue with your direct supervisor?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesSupervisor">
+      <image class="radio-image" id="yesSupervisorImage" onclick="selectSupervisor('yesSupervisor')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesSupervisor" name="supervisor" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noSupervisor">
+      <image class="radio-image" id="noSupervisorImage" onclick="selectSupervisor('noSupervisor')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noSupervisor" name="supervisor" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontSupervisor">
+      <image class="radio-image" id="dontSupervisorImage" onclick="selectSupervisor('dontSupervisor')" src="{{ url_for('static',filename = 'images/someofthem.jpg') }}"></image>
+      <input type="radio" id="dontSupervisor" name="supervisor" value="Some of them" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="CoworkersBack()">Back</button>
+  <button type="button" class="nextButton" onclick="potentialMentalNext('supervisor')">Next</button>
+
+</div>
+
+<script>
+  function selectSupervisor(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("supervisor");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+<div id="PotentialMental" style="display: none;">
+
+  <label><h1>Would you bring up a mental health issue with a potential employer in an interview?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesInterview">
+      <image class="radio-image" id="yesInterviewImage" onclick="selectInterview('yesInterview')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesInterview" name="mental_health_interview" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noInterview">
+      <image class="radio-image" id="noInterviewImage" onclick="selectInterview('noInterview')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noInterview" name="mental_health_interview" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontInterview">
+      <image class="radio-image" id="dontInterviewImage" onclick="selectInterview('dontInterview')" src="{{ url_for('static',filename = 'images/maybe.png') }}"></image>
+      <input type="radio" id="dontInterview" name="mental_health_interview" value="Maybe" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="supervisorBack()">Back</button>
+  <button type="button" class="nextButton" onclick="potentialPhyiscalNext('mental_health_interview')">Next</button>
+
+</div>
+
+<script>
+  function selectInterview(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("mental_health_interview");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+<div id="PotentialPhysical" style="display: none;">
+
+  <label><h1>Would you bring up a physical health issue with a potential employer in an interview?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yespInterview">
+      <image class="radio-image" id="yespInterviewImage" onclick="selectPhysicalInterview('yespInterview')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yespInterview" name="phys_health_interview" value="Yes" style="display: none;">
+    </label>
+
+    <label for="nopInterview">
+      <image class="radio-image" id="nopInterviewImage" onclick="selectPhysicalInterview('nopInterview')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="nopInterview" name="phys_health_interview" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontpInterview">
+      <image class="radio-image" id="dontpInterviewImage" onclick="selectPhysicalInterview('dontpInterview')" src="{{ url_for('static',filename = 'images/maybe.png') }}"></image>
+      <input type="radio" id="dontpInterview" name="phys_health_interview" value="Maybe" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="potentialMentalBack()">Back</button>
+  <button type="button" class="nextButton" onclick="SeriousNext('phys_health_interview')">Next</button>
+
+</div>
+
+<script>
+  function selectPhysicalInterview(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("phys_health_interview");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+<div id="Serious" style="display: none;">
+
+  <label><h1>Do you feel that your employer takes mental health as seriously as physical health?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesSerious">
+      <image class="radio-image" id="yesSeriousImage" onclick="selectSerious('yesSerious')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesSerious" name="mental_vs_physical" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noSerious">
+      <image class="radio-image" id="noSeriousImage" onclick="selectSerious('noSerious')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noSerious" name="mental_vs_physical" value="No" style="display: none;">
+    </label>
+    
+    <label for="dontSerious">
+      <image class="radio-image" id="dontSeriousImage" onclick="selectSerious('dontSerious')" src="{{ url_for('static',filename = 'images/Dontknow.jpg') }}"></image>
+      <input type="radio" id="dontSerious" name="mental_vs_physical" value="Don't know" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="potentialPhyiscalBack()">Back</button>
+  <button type="button" class="nextButton" onclick="ConditionsNext('mental_vs_physical')">Next</button>
+
+</div>
+
+<script>
+  function selectSerious(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("mental_vs_physical");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+<div id="Conditions" style="display: none;">
+
+  <label><h1>Have you heard of or observed negative consequences for coworkers with mental health conditions in your workplace?</h1></label><br>
+  
+  <div style="display: flex; justify-content: space-around;">
+    <label for="yesHeard">
+      <image class="radio-image" id="yesHeardImage" onclick="selectHeard('yesHeard')" src="{{ url_for('static',filename = 'images/yes.jpg') }}"></image>
+      <input type="radio" id="yesHeard" name="obs_consequence" value="Yes" style="display: none;">
+    </label>
+
+    <label for="noHeard">
+      <image class="radio-image" id="noHeardImage" onclick="selectHeard('noHeard')" src="{{ url_for('static',filename = 'images/no.jpg') }}"></image>
+      <input type="radio" id="noHeard" name="obs_consequence" value="No" style="display: none;">
+    </label>
+  </div><br>
+  
+  <button type="button" class="backButton" onclick="SeriousBack()">Back</button>
+  <button type="button" class="nextButton" onclick="finalNext('obs_consequence')">Next</button>
+
+</div>
+
+<script>
+  function selectHeard(optionId) {
+    let images = document.getElementsByClassName("radio-image");
+    for (let i = 0; i < images.length; i++) {
+      images[i].classList.remove("selected");
+    }
+    let image = document.getElementById(optionId + "Image");
+    image.classList.add("selected");
+
+    let radioButtons = document.getElementsByName("obs_consequence");
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].id === optionId) {
+        radioButtons[i].checked = true;
+      } else {
+        radioButtons[i].checked = false;
+      }
+    }
+  }
+</script>
+
+<style>
+  .selected {
+    border: 2px solid blue;
+  }
+</style>
+
+
+
+
+  <div id="final" style="display: none;">
+    <center><p><button type="Predict" class="btn btn-outline-primary ml-5" color='black'>Predict</button></p></center>
+
+            <!-- {{prediction}} -->
+  </div>
+
+
+  
+  
+</form>
+  <!-- <script src="continuosForm.js"></script> -->
+  <script>
+
+  function validateForm(className) {
+      var genderRadios = document.getElementsByName(className);
+
+      var genderChecked = false;
+
+      // Check if at least one gender option is selected
+      for (var i = 0; i < genderRadios.length; i++) {
+          if (genderRadios[i].checked) {
+              genderChecked = true;
+              break;
+          }
+      }
+      // Display alert messages for each group if no option is selected
+      if (!genderChecked) {
+          alert("Please select any one option.");
+          return false;
+      }
+      return true;
+  }
+      
+
+
+
+    function GenderQuestionNext() {
+  
+      document.getElementById('ageQuestion').style.display = 'none';
+      document.getElementById('genderQuestion').style.display = 'block';
+
+
+
+  }
+  function AgeQuestion() {
+    document.getElementById('genderQuestion').style.display = 'none';
+    document.getElementById('ageQuestion').style.display = 'block';
+  }
+  function SelfEmployedNext(className) {
+    if (validateForm(className)) {
+    
+      document.getElementById('genderQuestion').style.display = 'none';
+      document.getElementById('selfEmpQuestion').style.display = 'block';
+    }
+  }
+
+
+
+
+  function GenderQuestion(){
+          document.getElementById('selfEmpQuestion').style.display = 'none';
+          document.getElementById('genderQuestion').style.display = 'block';
+      
+    }
+  function SelfEmployedBack() {
+    document.getElementById('FamilyIllness').style.display = 'none';
+    document.getElementById('selfEmpQuestion').style.display = 'block';
+  }
+  
+
+
+
+
+
+  function FamilyIllnessNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('selfEmpQuestion').style.display = 'none';
+      document.getElementById('FamilyIllness').style.display = 'block';
+    }
+  }
+  function FamilyIllnessBack() {
+    document.getElementById('HealthQuestion').style.display = 'none';
+    document.getElementById('FamilyIllness').style.display = 'block';
+  }
+
+
+  
+  
+  
+  
+  
+  function HealthConditionNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('FamilyIllness').style.display = 'none';
+      document.getElementById('HealthQuestion').style.display = 'block';
+    }
+  }
+  function HealthConditionBack() {
+    document.getElementById('EmployeQuestion').style.display = 'none';
+    document.getElementById('HealthQuestion').style.display = 'block';
+  }
+
+
+
+
+  
+  
+  
+  function EmployesNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('HealthQuestion').style.display = 'none';
+      document.getElementById('EmployeQuestion').style.display = 'block';
+    }
+  }
+  function EmployesBack() {
+    
+    document.getElementById('Workmode').style.display = 'none';
+    document.getElementById('EmployeQuestion').style.display = 'block';
+  }
+
+
+
+
+
+  
+  
+  function WorkmodeBack() {
+    document.getElementById('HealthBenifits').style.display = 'none';
+    document.getElementById('Workmode').style.display = 'block';
+  }
+  function WorkmodeNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('EmployeQuestion').style.display = 'none';
+      document.getElementById('Workmode').style.display = 'block';
+    }
+  }
+  
+
+
+
+
+
+  
+  function HealthBenifitsNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('Workmode').style.display = 'none';
+      document.getElementById('HealthBenifits').style.display = 'block';
+    }
+  }
+  function HealthBenifitsBack() {
+    document.getElementById('MentalHealth').style.display = 'none';
+    document.getElementById('HealthBenifits').style.display = 'block';
+  }
+  
+
+
+
+
+
+  
+  
+  function MentalHealthNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('HealthBenifits').style.display = 'none';
+      document.getElementById('MentalHealth').style.display = 'block';
+    }
+  }
+  function MentalHealthBack() {
+    document.getElementById('HeathOption').style.display = 'none';
+    document.getElementById('MentalHealth').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  function HealthOptinsNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('MentalHealth').style.display = 'none';
+      document.getElementById('HeathOption').style.display = 'block';
+    }
+  }
+  function HealthOptinsBack() {
+    document.getElementById('Wellness').style.display = 'none';
+    document.getElementById('HeathOption').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+
+  
+  function WellnessNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('HeathOption').style.display = 'none';
+      document.getElementById('Wellness').style.display = 'block';
+    }
+  }
+  function WellnessBack() {
+    document.getElementById('Seekhelp').style.display = 'none';
+    document.getElementById('Wellness').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  function SeekhelpNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('Wellness').style.display = 'none';
+      document.getElementById('Seekhelp').style.display = 'block';
+    }
+  }
+  function SeekhelpBack() {
+    document.getElementById('TreatmentResource').style.display = 'none';
+    document.getElementById('Seekhelp').style.display = 'block';
+  }
+  
+
+
+
+
+
+  
+  
+  function treatmentNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('Seekhelp').style.display = 'none';
+      document.getElementById('TreatmentResource').style.display = 'block';
+    }
+  }
+  
+  function treatmentBack() {
+    document.getElementById('MedicalLeave').style.display = 'none';
+    document.getElementById('TreatmentResource').style.display = 'block';
+  }
+  
+
+
+
+
+
+  
+  
+  function MedicalLeaveNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('TreatmentResource').style.display = 'none';
+      document.getElementById('MedicalLeave').style.display = 'block';
+    }
+  }
+  function MedicalLeaveBack() {
+    document.getElementById('Consequences').style.display = 'none';
+    document.getElementById('MedicalLeave').style.display = 'block';
+  }
+  
+
+
+
+
+
+  
+  function MenatlConsequencesNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('MedicalLeave').style.display = 'none';
+      document.getElementById('Consequences').style.display = 'block';
+    }
+  }
+  function MentalConsequencesBack() {
+    document.getElementById('PhysicalConsequences').style.display = 'none';
+    document.getElementById('Consequences').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  
+  function PhysicalConsequencesNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('Consequences').style.display = 'none';
+      document.getElementById('PhysicalConsequences').style.display = 'block';
+    }
+  }
+  function PhysicalConsequencesBack() {
+    document.getElementById('CoWorkers').style.display = 'none';
+    document.getElementById('PhysicalConsequences').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  
+  function CoworkersNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('PhysicalConsequences').style.display = 'none';
+      document.getElementById('CoWorkers').style.display = 'block';
+    }
+  }
+  function CoworkersBack() {
+    document.getElementById('DirectSupervisor').style.display = 'none';
+    document.getElementById('CoWorkers').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  function supervisorNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('CoWorkers').style.display = 'none';
+      document.getElementById('DirectSupervisor').style.display = 'block';
+    }
+  }
+  function supervisorBack() {
+    document.getElementById('PotentialMental').style.display = 'none';
+    document.getElementById('DirectSupervisor').style.display = 'block';
+  }
+  
+  
+
+
+
+
+
+  function potentialMentalNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('DirectSupervisor').style.display = 'none';
+      document.getElementById('PotentialMental').style.display = 'block';
+    }
+  }
+  function potentialMentalBack() {
+    document.getElementById('PotentialPhysical').style.display = 'none';
+    document.getElementById('PotentialMental').style.display = 'block';
+  }
+  
+
+
+
+
+  
+  function potentialPhyiscalNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('PotentialMental').style.display = 'none';
+      document.getElementById('PotentialPhysical').style.display = 'block';
+    }
+  }
+  function potentialPhyiscalBack() {
+    document.getElementById('Serious').style.display = 'none';
+    document.getElementById('PotentialPhysical').style.display = 'block';
+  }
+  
+
+
+
+
+
+
+
+  function SeriousNext(className) {
+    if (validateForm(className)) {
+      document.getElementById('PotentialPhysical').style.display = 'none';
+      document.getElementById('Serious').style.display = 'block';
+    }
+  }
+  function SeriousBack() {
+    document.getElementById('Conditions').style.display = 'none';
+    document.getElementById('Serious').style.display = 'block';
+  }
+
+
+
+
+
+
+  function ConditionsNext(className){
+    if (validateForm(className)) {
+      document.getElementById('Serious').style.display = 'none';
+      document.getElementById('Conditions').style.display = 'block';
+    }
+  }
+
+
+
+  function finalNext(className){
+    if (validateForm(className)) {
+      document.getElementById('Conditions').style.display = 'none';
+      document.getElementById('final').style.display = 'block';
+    }
+  }
+
+  
+  
+  
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Instability Prediction App</title>
+    <link rel="stylesheet" href="{% static 'homepage/styles.css' %}">
+
+    <style>
+        /* General styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #004d99; /* Dark blue background */
+            padding: 20px 0;
+            position: fixed; /* Fixed position to stay on top */
+            width: 100%;
+            z-index: 1000; /* Ensure header is on top of other content */
+        }
+
+        header nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        header nav ul li:last-child {
+            margin-right: 0;
+        }
+
+        .login-button {
+            background-color: #ff6600; /* Orange login button */
+            border-radius: 5px;
+            height: 50px;
+            width: 100px;
+            color: white;
+            margin-left: auto; /* Align to the right */
+            display: inline-block; /* Make it inline block to prevent line break */
+            text-align: center;
+            line-height: 50px; /* Vertical centering */
+            text-decoration: none; /* Remove underline */
+            font-weight: bold;
+        }
+
+        /* Main content styles */
+        main {
+            padding-top: 100px; /* Add padding to account for fixed header */
+            background-color: #f2f2f2; /* Light gray background */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        button {
+            background-color: #009933; /* Green signup button */
+            border-radius: 5px;
+            height: 50px;
+            width: 150px;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #004d99; /* Dark blue heading color */
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #666666; /* Dark gray text color */
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">How to Use</a></li>
+                <li><a href="#">About Project</a></li>
+                <button class="login-button" onclick="redirectToLoginPage()">Login</button>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Psychological Instability Prediction App</h1>
+        <p>Please sign up to use this intelligent website to predict the medical insurance cost of a subject.</p>
+        <button onclick="redirectToSignupPage()">Sign Up</button>
+    </main>
+    <script>
+        function redirectToSignupPage() {
+            window.location.href = 'http://localhost:8000/signup/';
+        }
+        function redirectToLoginPage() {
+            window.location.href = 'http://localhost:8000/login/';
+        }
+        // You can add more JavaScript functionality as needed
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <title>Error page</title>
+        <style>
+            body{
+                color: red;
+                background-color: white;
+                font-size: 30px;
+            }
+              button{
+            background-color:blue;
+            border-radius: 5px;
+            height:50px;
+            width:75px;
+            color:white;
+
+        }
+        </style>
+    </head>
+    <body>
+        <center><h1>Invalid Entry(-_-)!</h1></center>
+        <center><button onclick="redirectToLoginPage()">Try Again</button></center>
+      <script>
+        function redirectToLoginPage() {
+        window.location.href = 'http://localhost:8000/login/';
+    }
+      </script>
+    </body>
+</html>

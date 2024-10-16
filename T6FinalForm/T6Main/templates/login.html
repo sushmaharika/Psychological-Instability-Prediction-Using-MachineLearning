@@ -1,0 +1,81 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+    
+        @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(115deg, #56d8e4 10%, #9f01ea 90%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .form-container {
+            width: 300px;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        form label {
+            font-size: 18px;
+        }
+        form input {
+            height: 45px;
+            width: 100%;
+            padding-left: 10px;
+            font-size: 17px;
+            border: 1px solid silver;
+            margin-bottom: 20px;
+        }
+        form input:focus {
+            border-color: #3498db;
+            border-bottom-width: 2px;
+        }
+        form input[type="submit"] {
+            height: 100%;
+            width: 100%;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            background-color: #3498db;
+        }
+        form input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form method="post">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+</html>
+
